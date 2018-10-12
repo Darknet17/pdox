@@ -9,12 +9,6 @@
  * @license  The MIT License (MIT) - <http://opensource.org/licenses/MIT>
  */
 
-namespace Buki;
-
-use Closure;
-use PDO;
-use PDOException;
-
 class Pdox
 {
     public $pdo = null;
@@ -69,9 +63,9 @@ class Pdox
             $this->pdo = new PDO($dsn, $config['username'], $config['password']);
             $this->pdo->exec("SET NAMES '" . $config['charset'] . "' COLLATE '" . $config['collation'] . "'");
             $this->pdo->exec("SET CHARACTER SET '" . $config['charset'] . "'");
-            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            die('Cannot the connect to Database with PDO.<br /><br />' . $e->getMessage());
+            die('No se puso establecer conexion con PDO.<br /><br />' . $e->getMessage());
         }
 
         return $this->pdo;
@@ -792,13 +786,13 @@ class Pdox
                     if ($all) {
                         $q = [];
 
-                        while ($result = ($array == false) ? $sql->fetchAll(PDO::FETCH_OBJ) : $sql->fetchAll(PDO::FETCH_ASSOC)) {
+                        while ($result = ($array != false) ? $sql->fetchAll(PDO::FETCH_OBJ) : $sql->fetchAll(PDO::FETCH_ASSOC)) {
                             $q[] = $result;
                         }
 
                         $this->result = $q[0];
                     } else {
-                        $q = ($array == false) ? $sql->fetch(PDO::FETCH_OBJ) : $sql->fetch(PDO::FETCH_ASSOC);
+                        $q = ($array != false) ? $sql->fetch(PDO::FETCH_OBJ) : $sql->fetch(PDO::FETCH_ASSOC);
                         $this->result = $q;
                     }
                 }
