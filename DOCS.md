@@ -1,7 +1,5 @@
 # PDOx Documentation
 
-```
-
 ## Contents
 
  * [select](#select)
