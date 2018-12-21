@@ -9,6 +9,10 @@
  * @license  The MIT License (MIT) - <http://opensource.org/licenses/MIT>
  */
 
+namespace Core\System\pdox;
+
+use PDO;
+
 class Pdox
 {
     public $pdo = null;
@@ -45,7 +49,7 @@ class Pdox
         $config['port'] = (strstr($config['host'], ':') ? explode(':', $config['host'])[1] : '');
         $this->prefix = (isset($config['prefix']) ? $config['prefix'] : '');
         $this->cacheDir = (isset($config['cachedir']) ? $config['cachedir'] : __DIR__ . '/cache/');
-        $this->debug = (isset($config['debug']) ? $config['debug'] : true);
+        $this->debug = (isset($config['debug']) ? $config['debug'] : ENVIROMENT);
 
         $dsn = '';
 
@@ -501,12 +505,12 @@ class Pdox
 
     public function error()
     {
-        $msg = '<h1>Database Error</h1>';
-        $msg .= '<h4>Query: <em style="font-weight:normal;">"' . $this->query . '"</em></h4>';
+        $msg = '<h4>Query: <em style="font-weight:normal;">"' . $this->query . '"</em></h4>';
         $msg .= '<h4>Error: <em style="font-weight:normal;">' . $this->error . '</em></h4>';
 
-        if ($this->debug === true) {
-            die($msg);
+        if ($this->debug === 'dev') {
+            __show_dev_messages__('SQL Error',$msg);
+            die();
         }
 
         throw new PDOException($this->error . '. (' . $this->query . ')');
@@ -651,6 +655,17 @@ class Pdox
         return $this->query($query, false);
     }
 
+    public function dropTable($type = false)
+    {
+        $query = 'DROP TABLE ' . $this->from;
+
+        if ($type === true) {
+            return $query;
+        }
+
+        return $this->query($query, false);
+    }
+
     public function analyze()
     {
         return $this->query('ANALYZE TABLE ' . $this->from, false);
@@ -712,7 +727,7 @@ class Pdox
         }
 
         $query = $this->pdo->exec($this->query);
-        if (! $query) {
+        if ($query === false) {
             $this->error = $this->pdo->errorInfo()[2];
             return $this->error();
         }
