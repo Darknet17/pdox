@@ -503,8 +503,7 @@ class Pdox
 
     public function error()
     {
-        $msg = '<h1>Database Error</h1>';
-        $msg .= '<h4>Query: <em style="font-weight:normal;">"' . $this->query . '"</em></h4>';
+        $msg = '<h4>Query: <em style="font-weight:normal;">"' . $this->query . '"</em></h4>';
         $msg .= '<h4>Error: <em style="font-weight:normal;">' . $this->error . '</em></h4>';
 
         if ($this->debug === 'dev') {
